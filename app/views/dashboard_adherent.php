@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 if ($_SESSION['role'] != 'ADHERENT') {
     die("Accès refusé");
 }
-var_dump($_SESSION['photo']);
 ?>
 
 <!DOCTYPE html>
@@ -22,16 +21,15 @@ var_dump($_SESSION['photo']);
 
 <h1>Dashboard</h1>
 
-<p><strong>Nom :</strong> <?= $_SESSION['nom'] ?></p>
-<p><strong>Prénom :</strong> <?= $_SESSION['prenom'] ?></p>
-<p><strong>Email :</strong> <?= $_SESSION['email'] ?></p>
-<p><strong>Rôle :</strong> <?= $_SESSION['role'] ?></p>
+<p><strong>Nom :</strong> <?= htmlspecialchars($_SESSION['nom']) ?></p>
+<p><strong>Prénom :</strong> <?= htmlspecialchars($_SESSION['prenom']) ?></p>
+<p><strong>Email :</strong> <?= htmlspecialchars($_SESSION['email']) ?></p>
+<p><strong>Rôle :</strong> <?= htmlspecialchars($_SESSION['role']) ?></p>
 
 <h3>Photo de profil</h3>
 
-
 <?php if (!empty($_SESSION['photo'])): ?>
-    <img src="/gestion_bibliotheque/uploads/<?= $_SESSION['photo'] ?>" width="150">
+    <img src="/gestion_bibliotheque/uploads/<?= htmlspecialchars($_SESSION['photo']) ?>" width="150" alt="Photo de profil">
 <?php else: ?>
     <p>Aucune photo</p>
 <?php endif; ?>

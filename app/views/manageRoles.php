@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Charge la connexion et le modèle utilisateur qui permet de récupérer la liste des utilisateurs
 require_once "../../database.php";
 require_once "../models/user.php";
 
@@ -9,6 +10,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Seul le responsable des prêts peut accéder à la gestion des rôles
 if ($_SESSION['role'] != "RP") {
     die("Accès refusé");
 }

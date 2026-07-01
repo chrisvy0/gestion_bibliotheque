@@ -9,7 +9,9 @@
 <body class="flex flex-col items-center justify-center w-screen h-screen bg-gray-200 text-gray-700">
 
 	<!-- Component Start -->
+	<!-- Titre du formulaire d'inscription -->
 	<h1 class="font-bold text-2xl">Créer un compte</h1>
+	<!-- Formulaire d'inscription avec upload de photo -->
 	<form class="flex flex-col bg-white rounded shadow-lg p-12 mt-12" action="/gestion_bibliotheque/app/controllers/AuthController.php?action=register" method="post" enctype="multipart/form-data">
 		<label class="font-semibold text-xs" for="nom">Nom</label>
 		<input class="flex items-center h-12 px-4 w-64 bg-gray-200 mt-2 rounded focus:outline-none focus:ring-2" type="text" id="nom" name="nom" required>

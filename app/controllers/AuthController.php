@@ -18,12 +18,14 @@
     
     function register(){
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            // Récupère les valeurs saisies par le formulaire
             $nom = trim($_POST['nom']);
             $prenom = trim($_POST['prenom']);
             $email = trim($_POST['email']);
             $password = trim($_POST['password']);
             $password_confirm = trim($_POST['password_confirm']);
 
+            // Validation des champs obligatoires
             if(empty($nom) || empty($prenom) || empty($email) || empty($password) || empty($password_confirm)){
                 die("Erreur: Tous les champs sont obligatoire");
             }
@@ -36,38 +38,36 @@
             if (findByEmail($email)) {
                 die("Cet email est déjà associé à un utilisateur");
             }
-        // Gestion de la photo
-        $photoName = null;
 
-        if(isset($_FILES['photo']) && $_FILES['photo']['error'] == 0){
+            // Gestion de la photo de profil si fournie
+            $photoName = null;
+            if(isset($_FILES['photo']) && $_FILES['photo']['error'] == 0){
+                // Récupération de l'extension
+                $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
 
-            // Récupération de l'extension
-            $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+                // Extensions autorisées
+                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+                if(!in_array($extension, $allowedExtensions)){
+                    die("Format d'image non autorisé");
+                }
 
-            // Extensions autorisées
-            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-
-            if(!in_array($extension, $allowedExtensions)){
-                die("Format d'image non autorisé");
+                // Nom de fichier unique pour éviter les collisions
+                $photoName = time() . "_" . uniqid() . "." . $extension;
+                $destination = "../../uploads/" . $photoName;
+                move_uploaded_file($_FILES['photo']['tmp_name'], $destination);
             }
 
-            // Création d'un nom unique
-            $photoName = time() . "_" . uniqid() . "." . $extension;
+            // Génération du token de validation d'email
+            $token = bin2hex(random_bytes(32));
+            $token_expire = date('Y-m-d H:i:s', strtotime('+1 day'));
 
-            // Destination
-            $destination = "../../uploads/" . $photoName;
-
-            // Déplacement du fichier
-            move_uploaded_file($_FILES['photo']['tmp_name'], $destination);
-        }
-        $token = bin2hex(random_bytes(32));
-        $token_expire = date('Y-m-d H:i:s', strtotime('+1 day'));
+            // Hash du mot de passe avant insertion
             $passwordHach = password_hash($password, PASSWORD_DEFAULT);
 
+            // Enregistrement utilisateur
             $savesuccess = createUser($nom, $prenom, $email, $passwordHach, $photoName, $token, $token_expire);
             if ($savesuccess) {
                 sendVerificationMail($email, $token);
-
                 echo "Inscription réussie. Vérifiez votre email.";
                 header("Refresh:3; URL=/gestion_bibliotheque/app/views/login.php");
                 exit;

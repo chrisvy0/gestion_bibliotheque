@@ -9,7 +9,9 @@
 <body class="flex flex-col items-center justify-center w-screen h-screen bg-gray-200 text-gray-700">
 
 	<!-- Component Start -->
+	<!-- Titre de la page de connexion -->
 	<h1 class="font-bold text-2xl">Bon retour :)</h1>
+	<!-- Formulaire de connexion -->
 	<form class="flex flex-col bg-white rounded shadow-lg p-12 mt-12" action="/gestion_bibliotheque/app/controllers/LoginController.php?action=login" method="post">
 		<label class="font-semibold text-xs" for="email">Email</label>
 		<input class="flex items-center h-12 px-4 w-64 bg-gray-200 mt-2 rounded focus:outline-none focus:ring-2" type="email" id="email" name="email" required>

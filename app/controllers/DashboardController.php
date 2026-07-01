@@ -1,17 +1,18 @@
 <?php
 
+// Démarre ou récupère la session utilisateur
 session_start();
 
-// Vérifier que l'utilisateur est connecté
+// Vérifie que l'utilisateur est connecté avant de rediriger
 if (!isset($_SESSION['user_id'])) {
     header("Location: /gestion_bibliotheque/app/views/login.php");
     exit;
 }
 
-// Récupération du rôle
+// On récupère le rôle stocké en session
 $role = $_SESSION['role'];
 
-// Redirection selon le rôle
+// Redirige vers le dashboard correspondant au rôle utilisateur
 switch ($role) {
 
     case 'ADHERENT':

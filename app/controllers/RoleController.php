@@ -4,7 +4,7 @@ session_start();
 require_once "../../database.php";
 require_once "../models/user.php";
 
-// Vérifier que c'est un RP
+// Ce contrôleur est réservé au RP pour modifier le rôle des utilisateurs.
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'RP') {
     header("Location: /gestion_bibliotheque/index.php");
     exit;

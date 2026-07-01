@@ -21,7 +21,9 @@ if ($_SESSION['role'] != 'RP') {
 
 <h1>Dashboard Responsable des Prêts</h1>
 
-<p>Bienvenue <?= $_SESSION['prenom']; ?></p>
+<p>Bienvenue <?= htmlspecialchars($_SESSION['prenom']); ?></p>
+
+<p>Utilisez ce tableau de bord pour gérer les rôles et suivre les prêts.</p>
 
 <ul>
     <li><a href="/gestion_bibliotheque/app/views/manageRoles.php">Gérer les rôles</a></li>

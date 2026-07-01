@@ -1,4 +1,5 @@
 <?php
+    // Recherche d'un utilisateur par email
     function findByEmail($email){
         global $connexion;
         $sql = "SELECT * FROM users WHERE email = ?";
@@ -16,10 +17,12 @@
         return false;
 
     }
+
+    // Création d'un nouvel utilisateur
     function createUser($nom, $prenom, $email, $password, $photo, $token, $token_expire) {
         global $connexion;
-        $sql = "INSERT INTO users(nom, prenom, email, password,photo,  role, is_verified, token, token_expire, must_change_pwd)
-        VALUES(?, ?, ?, ?,?, 'ADHERENT', 0, ?, ?, 1)";
+        $sql = "INSERT INTO users(nom, prenom, email, password, photo, role, is_verified, token, token_expire, must_change_pwd)
+        VALUES(?, ?, ?, ?, ?, 'ADHERENT', 0, ?, ?, 1)";
         $stmt = mysqli_prepare($connexion, $sql);
         if($stmt){
             mysqli_stmt_bind_param($stmt, "sssssss", $nom, $prenom, $email, $password, $photo, $token, $token_expire);

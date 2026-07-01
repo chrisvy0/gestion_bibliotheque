@@ -1,8 +1,10 @@
 <?php
+// Initialise la session utilisateur si nécessaire
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Vérifie l'accès RB au dashboard
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
@@ -11,15 +13,19 @@ if (!isset($_SESSION['user_id'])) {
 if ($_SESSION['role'] != 'RB') {
     die("Accès refusé");
 }
+
+// Charge la connexion et les fonctions métier pour les ouvrages, rayons et auteurs
 require_once __DIR__ . "/../../database.php";
 require_once __DIR__ . "/../models/ouvrages.php";
 
+// Récupère les statistiques et données à afficher dans le dashboard
 $totalRayons = countRayons();
 $totalOuvrages = countOuvrages();
 $totalAuteurs = countAuteurs();
 $exemplairesDisponibles = countExemplairesDisponibles();
 $ouvragesRecents = getOuvragesRecents();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -43,25 +49,27 @@ $ouvragesRecents = getOuvragesRecents();
                     </svg>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <a href="/gestion_bibliotheque/app/views/gerer_rayons.php" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m0 0h6"></path>
                     </svg>
                     <span>Gérer les rayons</span>
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <a href="/gestion_bibliotheque/app/views/gerer_auteurs.php" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                     <span>Gérer les auteurs</span>
                 </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17s4.5 10.747 10 10.747c5.5 0 10-4.998 10-10.747S17.5 6.253 12 6.253z"></path>
-                    </svg>
-                    <span>Gérer les ouvrages</span>
-                </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <a href="/gestion_bibliotheque/app/views/add_ouvrage.php"
+   class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4v16m8-8H4"></path>
+    </svg>
+    Ajouter un ouvrage
+</a>
+                <a href="/gestion_bibliotheque/app/views/manage_exemplaires.php" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19H2v-1a6 6 0 0112 0v1h3V9h-2"></path>
                     </svg>
@@ -104,16 +112,31 @@ $ouvragesRecents = getOuvragesRecents();
 
             <!-- Dashboard Content -->
             <div class="p-6">
+                <!-- Affiche les messages de succès ou d'erreur stockés en session -->
+                <?php if (isset($_SESSION['success'])): ?>
+                    <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                        <?= htmlspecialchars($_SESSION['success']); ?>
+                        <?php unset($_SESSION['success']); ?>
+                    </div>
+                <?php endif; ?>
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                        <?= htmlspecialchars($_SESSION['error']); ?>
+                        <?php unset($_SESSION['error']); ?>
+                    </div>
+                <?php endif; ?>
+
                 <!-- Page title + action -->
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Ouvrages</h3>
-                    <a href="/gestion_bibliotheque/app/views/ajouterOuvrage.php"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Ajouter un ouvrage
-                    </a>
+                    <a href="/gestion_bibliotheque/app/views/add_ouvrage.php"
+   class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4v16m8-8H4"></path>
+    </svg>
+    Gérer les ouvrages
+</a>
                 </div>
 
                 <!-- Stats Cards -->
@@ -187,17 +210,19 @@ $ouvragesRecents = getOuvragesRecents();
                     <table class="w-full">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Couverture</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Titre</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Auteur</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">ISBN</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Exemplaires</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Code</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Rayon</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Date d'édition</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Exemplaires</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
     <?php if (empty($ouvragesRecents)): ?>
         <tr>
-            <td colspan="5" class="px-6 py-4 text-sm text-gray-500 text-center">
+            <td colspan="7" class="px-6 py-4 text-sm text-gray-500 text-center">
                 Aucun ouvrage enregistré pour le moment.
             </td>
         </tr>
@@ -205,23 +230,32 @@ $ouvragesRecents = getOuvragesRecents();
         <?php foreach ($ouvragesRecents as $ouvrage): ?>
             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
-                    <?= htmlspecialchars($ouvrage['titre']) ?>
+                    <?php if (!empty($ouvrage['photo'])): ?>
+                        <img src="/gestion_bibliotheque/uploads/<?= htmlspecialchars($ouvrage['photo']); ?>" alt="Couverture" class="w-16 h-16 object-cover rounded">
+                    <?php else: ?>
+                        <div class="w-16 h-16 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded text-xs text-gray-500 dark:text-gray-300">
+                            Aucune
+                        </div>
+                    <?php endif; ?>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                    <?= htmlspecialchars($ouvrage['rayon']) ?>
+                <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
+                    <?= htmlspecialchars($ouvrage['titre']) ?>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                     <?= htmlspecialchars($ouvrage['code']) ?>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                    <?= $ouvrage['nb_exemplaires'] ?>
+                    <?= htmlspecialchars($ouvrage['rayon']) ?>
                 </td>
-                <td class="px-6 py-4 text-sm">
-                    <?php if ($ouvrage['nb_exemplaires'] > 0): ?>
-                        <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-800">Disponible</span>
-                    <?php else: ?>
-                        <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-red-100 text-red-800">Indisponible</span>
-                    <?php endif; ?>
+                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    <?= htmlspecialchars($ouvrage['date_edition'] ?? '-') ?>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    <?= htmlspecialchars($ouvrage['nb_exemplaires'] ?? 0) ?>
+                </td>
+
+                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    Modifier | Supprimer
                 </td>
             </tr>
         <?php endforeach; ?>

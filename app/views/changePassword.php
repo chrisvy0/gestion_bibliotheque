@@ -21,7 +21,7 @@ if (!isset($_SESSION['user_id'])) {
     <h1 class="font-bold text-2xl mb-4">Changement de mot de passe</h1>
     <p class="text-center mb-6 max-w-md text-sm">Bonjour <span class="font-semibold"><?php echo htmlspecialchars($_SESSION['prenom']); ?></span>, pour la sécurité de votre compte, veuillez modifier votre mot de passe.</p>
 
-    <!-- Le formulaire envoie les données vers le contrôleur -->
+    <!-- Le formulaire envoie les données vers le contrôleur pour mettre à jour le mot de passe -->
     <form class="flex flex-col bg-white rounded shadow-lg p-12 mt-4" action="/gestion_bibliotheque/app/controllers/loginController.php?action=update_password" method="post">
         
         <label class="font-semibold text-xs" for="new_password">Nouveau mot de passe</label>
