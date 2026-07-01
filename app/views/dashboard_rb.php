@@ -67,7 +67,7 @@ $ouvragesRecents = getOuvragesRecents();
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 4v16m8-8H4"></path>
     </svg>
-    Ajouter un ouvrage
+    Gérer ouvrage
 </a>
                 <a href="/gestion_bibliotheque/app/views/manage_exemplaires.php" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,7 +135,7 @@ $ouvragesRecents = getOuvragesRecents();
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 4v16m8-8H4"></path>
     </svg>
-    Gérer les ouvrages
+    Ajouter un ouvrage
 </a>
                 </div>
 
